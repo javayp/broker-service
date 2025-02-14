@@ -1,0 +1,4 @@
+<----Create Topic---->
+kafka-topics --bootstrap-server kafka1:9092 --create --topic single-broker-event-topic --partitions 3 --replication-factor 2
+kafka-topics --bootstrap-server kafka1:9093 --create --topic single-broker-event-topic --partitions 3 --replication-factor 2
+kafka-topics --bootstrap-server kafka1:9094 --create --topic single-broker-event-topic --partitions 3 --replication-factor 2
