@@ -35,16 +35,6 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	// Sleuth and Zipkin for distributed tracing
-	implementation 'io.micrometer:micrometer-tracing'
-	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
-	implementation 'io.zipkin.brave:brave-instrumentation-slf4j:5.13.3'
-	// https://mvnrepository.com/artifact/io.zipkin.brave/brave
-	implementation group: 'io.zipkin.brave', name: 'brave', version: '5.18.1'
-
-	implementation 'org.slf4j:slf4j-api'
-	implementation 'ch.qos.logback:logback-classic'
-
 
 	// Development tools
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
