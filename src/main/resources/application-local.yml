@@ -7,6 +7,11 @@ spring:
       bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        enable.idempotence: true
+        acks: all
+        retries: 1245
+        max.in.flight.requests.per.connection: 5
     admin:
       properties:
         bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
