@@ -1,6 +1,7 @@
 package com.app.broker.application;
 
 import com.app.broker.dto.AssetTransactionRequest;
+import com.app.broker.entities.ParentOrder;
 import com.app.broker.entities.Transaction;
 import com.app.broker.enums.TransactionStatus;
 import com.app.broker.infrastructure.messaging.KafkaEventPublisher;
@@ -61,5 +62,13 @@ public class TransactionService {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private void placeOrder(int quantity,int split,String asset){
+
+        ParentOrder.builder().parentOrderId(String.valueOf(UUID.randomUUID()))
+                .totalQuantity(quantity)
+                .split(split)
+                .build();
     }
 }
