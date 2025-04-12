@@ -8,11 +8,20 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class KafkaConfig {
     @Bean
-    public NewTopic libraryEvent(){
-        return TopicBuilder.name("single-broker-event-topic")
+    public NewTopic parentOrderTopic(){
+        return TopicBuilder.name("parent-order-topic")
                 .partitions(3)
                 .replicas(3)
                 .build();
     }
+
+    @Bean
+    public NewTopic subOrderTopic(){
+        return TopicBuilder.name("sub-order-topic")
+                .partitions(3)
+                .replicas(3)
+                .build();
+    }
+
 
 }

@@ -1,7 +1,7 @@
 package com.app.broker.api;
 
 import com.app.broker.application.TransactionService;
-import com.app.broker.dto.AssetTransactionRequest;
+import com.app.broker.dto.DataRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +18,7 @@ public class BrokerApi {
     }
 
     @PostMapping("/buy")
-    public void buy(@RequestBody AssetTransactionRequest assetTransactionRequest){
-        transactionService.initiateAction(assetTransactionRequest);
+    public void buy(@RequestBody DataRequest dataRequest){
+        transactionService.initiateAction(dataRequest);
     }
 }

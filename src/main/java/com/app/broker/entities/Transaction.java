@@ -4,7 +4,6 @@ import com.app.broker.enums.TransactionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Transaction {
     private final String transactionId;
-    private final String userId;
+    private final String brokerId;
     private final String assetType;
     private final String action;
     private final int quantity;
