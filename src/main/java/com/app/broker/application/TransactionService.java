@@ -31,7 +31,7 @@ public class TransactionService {
 
     private void performBuyTransaction(DataRequest dataRequest){
 
-        int totalQuantity = dataRequest.getTotalQuantity(); // Random value between 10,000 and 100,000
+        int totalQuantity = dataRequest.getTotalQuantity();
         var parentOrder=ParentOrder.builder()
                 .parentOrderId(String.valueOf(UUID.randomUUID()))
                 .customerId( dataRequest.getCustomerId())

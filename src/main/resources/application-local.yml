@@ -8,10 +8,40 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
       properties:
+
+        #Idempotence in Kafka refers to the guarantee that producing the same message multiple times to a Kafka topic will have the same effect as producing it once
+        #at partition level
         enable.idempotence: true
-        acks: all
-        retries: 1245
+
+        #The retries configuration in Kafka producers defines how many times the producer will retry sending a message if it encounters a transient error
+        #(such as a network issue or broker unavailability).
+        retries: 100
+
+        #The max.in.flight.requests.per.connection configuration in Kafka controls how many requests (i.e., messages) a Kafka producer can send in parallel
+        #over a single connection to the Kafka broker without receiving an acknowledgment.
         max.in.flight.requests.per.connection: 5
+
+        #The buffer.memory configuration in Kafka refers to the total amount of memory that the Kafka producer can use for buffering messages before
+        #sending them to the broker.This is useful in batching
+        buffer.memory: 33554432 #32 MB
+
+        #It defines the amount of time (in milliseconds) the producer will wait before sending a batch of messages to the broker, even if the batch is not full.
+        linger.ms: 20
+
+        #It defines how large a batch of messages can grow before Kafka sends the batch to the broker.
+        batch.size: 16384
+
+        #Compression Algorithm	Compression Ratio	Compression Speed	Decompression Speed	  CPU Usage
+        #Snappy	                Moderate (2x–3x)	Very Fast	                  Very Fast	  Low
+        #GZIP	                High (5x–10x)	    Slow	                      Slow	      High
+        #LZ4	                Moderate (3x–6x)	Fast	                      Very Fast	  Low
+        #Zstd	                Very High (3x–10x)	Moderate (faster than GZIP)	  Fast	      Low to Moderate
+        compression.type: snappy
+
+        #The producer waits for all in-sync replicas (ISR) to acknowledge the message. This provides the strongest durability guarantee,
+        #ensuring that data is replicated to all in-sync replicas before the producer considers it successfully written.
+        acks: all
+
     admin:
       properties:
         bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
