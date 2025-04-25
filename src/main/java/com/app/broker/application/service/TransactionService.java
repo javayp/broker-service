@@ -1,8 +1,8 @@
-package com.app.broker.application;
+package com.app.broker.application.service;
 
+import com.app.broker.application.command.MessageCommand;
 import com.app.broker.dto.DataRequest;
 import com.app.broker.entities.ParentOrder;
-import com.app.broker.infrastructure.messaging.KafkaEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,25 +14,22 @@ import java.util.UUID;
 @Service
 public class TransactionService {
 
-    private KafkaEventPublisher kafkaEventPublisher;
+    private final MessageCommand messageCommand;
 
     @Autowired
-    public TransactionService(KafkaEventPublisher kafkaEventPublisher) {
-        this.kafkaEventPublisher = kafkaEventPublisher;
+    public TransactionService(MessageCommand messageCommand) {
+        this.messageCommand=messageCommand;
     }
 
     public void initiateAction(DataRequest dataRequest) {
-        if (dataRequest.getAction().equals("BUY")){
-            performBuyTransaction(dataRequest);
-        }else {
-
-        }
+        ParentOrder parentOrder = buildParentOrder(dataRequest);
+        messageCommand.sendMessage(parentOrder);
     }
 
-    private void performBuyTransaction(DataRequest dataRequest){
+    private ParentOrder buildParentOrder(DataRequest dataRequest){
 
         int totalQuantity = dataRequest.getTotalQuantity();
-        var parentOrder=ParentOrder.builder()
+        return ParentOrder.builder()
                 .parentOrderId(String.valueOf(UUID.randomUUID()))
                 .customerId( dataRequest.getCustomerId())
                 .assetId(dataRequest.getAssetId())
@@ -54,9 +51,6 @@ public class TransactionService {
                 .exchange(dataRequest.getExchange())
                 .lastUpdated(LocalDateTime.now())
                 .build();
-
-        kafkaEventPublisher.publishEvent("parent-order-topic",
-                parentOrder.getParentOrderId(),parentOrder);
     }
 
 }

@@ -22,6 +22,8 @@ public class ParentOrder {
     private String orderStatus;            // e.g., "PENDING", "PARTIALLY_EXECUTED", "FULLY_EXECUTED"
     private int expectedSplits;            // Planned number of sub-orders (slices)
     private int completedSplits;           // Number of sub-orders executed
+    //Market Order: an instruction to buy or sell immediately at the best available current price
+    //Limit Order: an instruction to buy or sell only at (or better than) a specified price.
     private String orderType;              // e.g., "Market", "Limit"
     private String strategy;               // General execution strategy (e.g., "Order Slicing")
     private String executionStrategy;      // Specific algorithm used (e.g., "VWAP", "TWAP")
