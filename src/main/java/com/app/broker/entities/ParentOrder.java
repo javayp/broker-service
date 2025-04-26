@@ -1,40 +1,33 @@
 package com.app.broker.entities;
 
-import com.app.broker.enums.TransactionStatus;
 import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Builder
-public class ParentOrder {
+public class ParentOrder extends OrderBase{
 
-    private String parentOrderId;          // Unique identifier for the order
-    private String customerId;             // Customer who placed the order
-    private String assetId;                // Identifier for the asset (e.g., "AAPL", "NVDA")
-    private String orderCategory;          // e.g., "EQUITY", "OPTION", "BOND", "MUTUAL_FUND", "IPO"
-    private long totalQuantity;            // Total units (shares, contracts, etc.) intended
-    private long executedQuantity;         // Cumulative quantity executed across sub-orders
-    private String orderStatus;            // e.g., "PENDING", "PARTIALLY_EXECUTED", "FULLY_EXECUTED"
+    private String assetId;        // Asset for the order
+    private String orderCategory;  // Category of the order (e.g., "EQUITY")
+    private long totalQuantity;    // Total quantity of units
+    private long executedQuantity; // Executed quantity of units
+    private String orderType;      // Order type (e.g., "Market")
+
     private int expectedSplits;            // Planned number of sub-orders (slices)
     private int completedSplits;           // Number of sub-orders executed
     //Market Order: an instruction to buy or sell immediately at the best available current price
     //Limit Order: an instruction to buy or sell only at (or better than) a specified price.
-    private String orderType;              // e.g., "Market", "Limit"
     private String strategy;               // General execution strategy (e.g., "Order Slicing")
     private String executionStrategy;      // Specific algorithm used (e.g., "VWAP", "TWAP")
+    private BigDecimal totalCommission;    // Aggregated commission from sub-orders
+    private String exchange;               // Trading venue
     private LocalDateTime submissionTime;  // When the order was submitted
     private LocalDateTime acknowledgmentTime; // When the order was acknowledged
     private LocalDateTime executionStart;  // When execution started
     private LocalDateTime executionEnd;    // When execution ended
-    private BigDecimal fees;               // Additional fees charged
-    private BigDecimal totalCommission;    // Aggregated commission from sub-orders
-    private String brokerId;               // Broker identifier
-    private String exchange;               // Trading venue
     private LocalDateTime lastUpdated;     // Last update timestamp
 
 }
