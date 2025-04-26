@@ -22,6 +22,7 @@ public class BrokerApi {
 
     @PostMapping("/buy")
     public void buy(@RequestBody DataRequest dataRequest){
+        dataRequestValidatorService.validateDataRequestDTO(dataRequest);
         transactionService.initiateAction(dataRequest);
     }
 }

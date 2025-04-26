@@ -1,6 +1,8 @@
 package com.app.broker.application.validation;
 
+import com.app.broker.application.exception.custom.InvalidActionRequestException;
 import com.app.broker.dto.DataRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,15 +16,19 @@ public class ActionValidator implements DataRequestValidatorHandler{
     }
 
     @Override
-    public boolean validate(DataRequest dataRequest) {
+    public void validate(DataRequest dataRequest) {
 
-        boolean isValid=true;
-        isValid=dataRequest.getAction().equals("BUY");
+        // Validate the action, if invalid throw custom exception
+        if (!dataRequest.getAction().equals("BUY")) {
+            throw new InvalidActionRequestException(
+                    "Invalid action: " + dataRequest.getAction(),
+                    "INVALID_ACTION",
+                    HttpStatus.BAD_REQUEST);
+        }
 
-        //linking the chain
-        if (dataRequestValidatorHandler!=null){
+        // Link to the next handler if available
+        if (dataRequestValidatorHandler != null) {
             dataRequestValidatorHandler.validate(dataRequest);
         }
-        return isValid;
     }
 }
