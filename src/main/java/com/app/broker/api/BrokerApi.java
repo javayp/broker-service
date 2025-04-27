@@ -2,7 +2,7 @@ package com.app.broker.api;
 
 import com.app.broker.application.service.DataRequestValidatorService;
 import com.app.broker.application.service.TransactionService;
-import com.app.broker.dto.DataRequest;
+import com.app.broker.dto.DataRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,8 +21,8 @@ public class BrokerApi {
     }
 
     @PostMapping("/buy")
-    public void buy(@RequestBody DataRequest dataRequest){
-        dataRequestValidatorService.validateDataRequestDTO(dataRequest);
-        transactionService.initiateAction(dataRequest);
+    public void buy(@RequestBody DataRequestDTO dataRequestDTO){
+        dataRequestValidatorService.validateDataRequestDTO(dataRequestDTO);
+        transactionService.initiateTransaction(dataRequestDTO);
     }
 }

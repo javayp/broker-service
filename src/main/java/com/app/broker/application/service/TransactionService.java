@@ -1,56 +1,58 @@
 package com.app.broker.application.service;
 
-import com.app.broker.application.command.MessageCommand;
-import com.app.broker.dto.DataRequest;
+import com.app.broker.application.command.GeneralCommand;
+import com.app.broker.dto.DataRequestDTO;
+import com.app.broker.dto.MessageOrderBaseRequestDTO;
+import com.app.broker.dto.SubOrderDTO;
 import com.app.broker.entities.ParentOrder;
+import com.app.broker.entities.SubOrder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Random;
-import java.util.UUID;
 
+@Slf4j
 @Service
 public class TransactionService {
 
-    private final MessageCommand messageCommand;
+    private final GeneralCommand<ParentOrder, DataRequestDTO> buildParentOrderCommand;
+    private final GeneralCommand<SubOrder, SubOrderDTO> buildSubOrderOrderCommand;
+    private final GeneralCommand<Void, MessageOrderBaseRequestDTO> messageOrderCommand;
 
     @Autowired
-    public TransactionService(MessageCommand messageCommand) {
-        this.messageCommand=messageCommand;
+    public TransactionService(GeneralCommand<ParentOrder, DataRequestDTO> buildParentOrderCommand, GeneralCommand<SubOrder, SubOrderDTO> buildSubOrderOrderCommand, GeneralCommand<Void, MessageOrderBaseRequestDTO> messageOrderCommand) {
+        this.buildParentOrderCommand = buildParentOrderCommand;
+        this.buildSubOrderOrderCommand = buildSubOrderOrderCommand;
+        this.messageOrderCommand = messageOrderCommand;
     }
 
-    public void initiateAction(DataRequest dataRequest) {
-        ParentOrder parentOrder = buildParentOrder(dataRequest);
-        messageCommand.sendMessage(parentOrder);
+    public void initiateTransaction(DataRequestDTO dataRequestDTO){
+        ParentOrder parentOrder = buildParentOrderCommand.execute(dataRequestDTO);
+        log.info(String.valueOf(parentOrder));
+        triggerMessage(new MessageOrderBaseRequestDTO("parent-topic",parentOrder));
+        triggerSubOrdersBasedOnParentOrder(parentOrder);
     }
 
-    private ParentOrder buildParentOrder(DataRequest dataRequest){
+    private void triggerSubOrdersBasedOnParentOrder(ParentOrder parentOrder)  {
+        try {
+            long totalQuantity = parentOrder.getTotalQuantity();
+            int expectedSplits = parentOrder.getExpectedSplits();
+            BigDecimal price = BigDecimal.valueOf(100 + new Random().nextInt(150));
+            for (int i = 0; i < parentOrder.getExpectedSplits(); i++) {
+                Thread.sleep(5000 + new Random().nextInt(15000));
+                SubOrder subOrder = buildSubOrderOrderCommand.execute(new SubOrderDTO(totalQuantity / (expectedSplits - i), price,parentOrder));
+                totalQuantity=totalQuantity-10000;
+                messageOrderCommand.execute(new MessageOrderBaseRequestDTO("suborder-topic",subOrder));
+            }
+        }catch (Exception e){
+            log.error("Error while producing suborders!!");
+        }
+    }
 
-        int totalQuantity = dataRequest.getTotalQuantity();
-        return ParentOrder.builder()
-                .parentOrderId(String.valueOf(UUID.randomUUID()))
-                .customerId( dataRequest.getCustomerId())
-                .assetId(dataRequest.getAssetId())
-                .orderCategory(dataRequest.getOrderCategory())
-                    .totalQuantity(dataRequest.getTotalQuantity())
-                .executedQuantity(0)
-                .orderStatus("PARTIALLY_EXECUTED")
-                .expectedSplits((int) Math.ceil((double) totalQuantity / 10000))
-                .completedSplits(0)
-                .orderType(dataRequest.getOrderType())
-                .strategy("Order Slicing")
-                .executionStrategy(new Random().nextBoolean() ? "Market" : "Limit")
-                .submissionTime(LocalDateTime.now())
-                .acknowledgmentTime(LocalDateTime.now())
-                .executionStart(LocalDateTime.now())
-                .fees(new BigDecimal(totalQuantity*0.002))
-                .totalCommission(new BigDecimal(totalQuantity*0.001))
-                .brokerId(dataRequest.getBrokerId())
-                .exchange(dataRequest.getExchange())
-                .lastUpdated(LocalDateTime.now())
-                .build();
+    private void triggerMessage(MessageOrderBaseRequestDTO messageOrderBaseRequestDTO){
+        messageOrderCommand.execute(messageOrderBaseRequestDTO);
     }
 
 }

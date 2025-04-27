@@ -9,7 +9,7 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaConfig {
     @Bean
     public NewTopic parentOrderTopic(){
-        return TopicBuilder.name("parent-order-topic")
+        return TopicBuilder.name("parent-topic")
                 .partitions(3)
                 .replicas(3)
                 .build();
@@ -17,7 +17,7 @@ public class KafkaConfig {
 
     @Bean
     public NewTopic subOrderTopic(){
-        return TopicBuilder.name("sub-order-topic")
+        return TopicBuilder.name("suborder-topic")
                 .partitions(3)
                 .replicas(3)
                 .build();

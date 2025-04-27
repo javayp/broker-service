@@ -1,7 +1,7 @@
 package com.app.broker.application.validation;
 
 import com.app.broker.application.exception.custom.InvalidCustomerAndBrokerIDException;
-import com.app.broker.dto.DataRequest;
+import com.app.broker.dto.DataRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -18,19 +18,19 @@ public class CustomerAndBrokerIdValidator implements DataRequestValidatorHandler
     }
 
     @Override
-    public void validate(DataRequest dataRequest) {
-        if (dataRequest.getBrokerId().length()!=5 && !dataRequest.getBrokerId().startsWith("B-")
-                && !dataRequest.getCustomerId().startsWith("C") && dataRequest.getCustomerId().length()!=5){
+    public void validate(DataRequestDTO dataRequestDTO) {
+        if (dataRequestDTO.brokerId().length()!=5 && !dataRequestDTO.brokerId().startsWith("B-")
+                && !dataRequestDTO.customerId().startsWith("C") && dataRequestDTO.customerId().length()!=5){
             log.error("Error in CustomerAndBrokerIdValidator");
             throw new InvalidCustomerAndBrokerIDException(
-                    "Invalid customer or/and  BrokerId: min length requires is 5 " + dataRequest.getCustomerId()+":"+dataRequest.getBrokerId(),
+                    "Invalid customer or/and  BrokerId: min length requires is 5 " + dataRequestDTO.customerId()+":"+ dataRequestDTO.brokerId(),
                     "INVALID_ID",
                     HttpStatus.BAD_REQUEST);
 
         }
 
         if (dataRequestValidatorHandler!=null){
-            dataRequestValidatorHandler.validate(dataRequest);
+            dataRequestValidatorHandler.validate(dataRequestDTO);
         }
     }
 }

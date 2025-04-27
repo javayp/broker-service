@@ -1,20 +1,23 @@
 package com.app.broker.application.command;
 
-
-import com.app.broker.entities.ParentOrder;
+import com.app.broker.dto.MessageOrderBaseRequestDTO;
 import com.app.broker.intefaces.EventPublisher;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-@Service
-public class MessageCommand {
+@Component
+public class MessageCommand implements GeneralCommand<Void, MessageOrderBaseRequestDTO> {
 
     private final EventPublisher eventPublisher;
 
-    public MessageCommand(EventPublisher eventPublisher){
-        this.eventPublisher=eventPublisher;
+    @Autowired
+    public MessageCommand(EventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
     }
 
-    public void sendMessage(ParentOrder parentOrder){
-        eventPublisher.publishEvent("parent-order-topic",parentOrder.getParentOrderId(),parentOrder);
+    @Override
+    public Void execute(MessageOrderBaseRequestDTO orderBase) {
+        eventPublisher.publishEvent(orderBase.topicName(),orderBase.data().getParentOrderId(),orderBase);
+        return null;
     }
 }

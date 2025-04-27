@@ -4,7 +4,7 @@ import com.app.broker.application.validation.ActionValidator;
 import com.app.broker.application.validation.CustomerAndBrokerIdValidator;
 import com.app.broker.application.validation.DataRequestValidatorHandler;
 import com.app.broker.application.validation.TotalQuantityValidator;
-import com.app.broker.dto.DataRequest;
+import com.app.broker.dto.DataRequestDTO;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,7 +18,7 @@ public class DataRequestValidatorService {
         customerAndBrokerIdValidator.setNextHandler(totalQuantityValidator);
     }
 
-    public void validateDataRequestDTO(DataRequest dataRequest){
-        dataRequestValidatorHandler.validate(dataRequest);
+    public void validateDataRequestDTO(DataRequestDTO dataRequestDTO){
+        dataRequestValidatorHandler.validate(dataRequestDTO);
     }
 }

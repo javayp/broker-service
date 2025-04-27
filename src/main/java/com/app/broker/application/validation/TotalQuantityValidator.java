@@ -1,7 +1,7 @@
 package com.app.broker.application.validation;
 
 import com.app.broker.application.exception.custom.InvalidTotalQuantityException;
-import com.app.broker.dto.DataRequest;
+import com.app.broker.dto.DataRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -18,15 +18,18 @@ public class TotalQuantityValidator implements DataRequestValidatorHandler{
     }
 
     @Override
-    public void validate(DataRequest dataRequest) {
+    public void validate(DataRequestDTO dataRequestDTO) {
 
-        if (dataRequest.getTotalQuantity()%2!=0){
+        if (dataRequestDTO.totalQuantity()%2!=0){
             log.error("OrderQuantity cannot be odd");
             throw new InvalidTotalQuantityException("Quantity has to be even","INTERNAL_SERVER_ERROR", HttpStatus.BAD_REQUEST);
+        }else if (dataRequestDTO.totalQuantity()<50000){
+            log.error("OrderQuantity cannot be less than 50000");
+            throw new InvalidTotalQuantityException("Quantity has to be more than 50000","INTERNAL_SERVER_ERROR", HttpStatus.BAD_REQUEST);
         }
 
         if (dataRequestValidatorHandler!=null){
-            dataRequestValidatorHandler.validate(dataRequest);
+            dataRequestValidatorHandler.validate(dataRequestDTO);
         }
     }
 }
